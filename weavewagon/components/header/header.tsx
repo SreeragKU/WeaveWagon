@@ -9,7 +9,7 @@ const Header = () => {
       <nav>
         <div className="navbar justify-between bg-base-300">
           <Link href="/" className="btn btn-ghost text-lg">
-            <Image src="/images/logo.png" alt="logo" width="50" height="40" />
+            <Image src="/images/logo.png" alt="logo" width={50} height={40} />
             WeaveWagon
           </Link>
           <ul className="flex">
