@@ -2,6 +2,7 @@ import { ShoppingCartOutlined, UserOutlined } from '@ant-design/icons'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import Menu from './Menu'
 
 const Header = () => {
   return (
@@ -12,18 +13,7 @@ const Header = () => {
             <Image src="/images/logo.png" alt="logo" width={50} height={40} />
             WeaveWagon
           </Link>
-          <ul className="flex">
-            <li>
-              <Link className="btn btn-ghost rounded-btn" href="/cart">
-                <ShoppingCartOutlined /> Cart
-              </Link>
-            </li>
-            <li>
-              <Link className="btn btn-ghost rounded-btn" href="/signin">
-                <UserOutlined /> Sign in
-              </Link>
-            </li>
-          </ul>
+          <Menu />
         </div>
       </nav>
     </header>
