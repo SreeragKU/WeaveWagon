@@ -1,21 +1,25 @@
 import mongoose from 'mongoose'
 
+export type User = {
+  _id: string
+  name: string
+  email: string
+  isAdmin: boolean
+}
+
 const UserSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      trim: true,
+      required: true,
     },
     email: {
       type: String,
-      trim: true,
       required: true,
       unique: true,
     },
     password: {
       type: String,
-      min: 8,
-      max: 64,
       required: true,
     },
     isAdmin: { type: Boolean, required: true, default: false },

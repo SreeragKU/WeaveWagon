@@ -1,10 +1,9 @@
-import data from '@/lib/data'
+import AddToCart from '@/components/products/AddToCart'
 import { convertDocToObj } from '@/lib/utils'
+import productService from '@/lib/services/productService'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeftOutlined, ShoppingCartOutlined } from '@ant-design/icons'
-import AddToCart from '@/components/products/AddToCart'
-import productService from '@/lib/services/productService'
+import { Rating } from '@/components/products/Rating'
 
 export async function generateMetadata({
   params,
@@ -27,18 +26,13 @@ export default async function ProductDetails({
   params: { slug: string }
 }) {
   const product = await productService.getBySlug(params.slug)
-
   if (!product) {
     return <div>Product not found</div>
   }
-
   return (
     <>
       <div className="my-2">
-        <Link href="/" className="flex items-center text-primary">
-          <ArrowLeftOutlined style={{ fontSize: '18px', marginRight: '4px' }} />
-          Back to products
-        </Link>
+        <Link href="/">back to products</Link>
       </div>
       <div className="grid md:grid-cols-4 md:gap-3">
         <div className="md:col-span-2">
@@ -48,7 +42,10 @@ export default async function ProductDetails({
             width={640}
             height={640}
             sizes="100vw"
-            style={{ width: '100%', height: 'auto' }}
+            style={{
+              width: '100%',
+              height: 'auto',
+            }}
           ></Image>
         </div>
         <div>
@@ -57,9 +54,12 @@ export default async function ProductDetails({
               <h1 className="text-xl">{product.name}</h1>
             </li>
             <li>
-              {product.rating} of {product.numReviews} reviews
+              <Rating
+                value={product.rating}
+                caption={`${product.numReviews} ratings`}
+              />
             </li>
-            <li>{product.brand}</li>
+            <li> {product.brand}</li>
             <li>
               <div className="divider"></div>
             </li>
@@ -69,16 +69,16 @@ export default async function ProductDetails({
           </ul>
         </div>
         <div>
-          <div className="card bg-base-300 shadow-xl mt-3 md:mt-0">
+          <div className="card  bg-base-300 shadow-xl mt-3 md:mt-0">
             <div className="card-body">
               <div className="mb-2 flex justify-between">
                 <div>Price</div>
-                <div>₹{product.price}</div>
+                <div>₹ {product.price}</div>
               </div>
               <div className="mb-2 flex justify-between">
                 <div>Status</div>
                 <div>
-                  {product.countInStock > 0 ? 'In Stock' : 'Unavailable'}
+                  {product.countInStock > 0 ? 'In stock' : 'Unavailable'}
                 </div>
               </div>
               {product.countInStock !== 0 && (

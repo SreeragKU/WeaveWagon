@@ -133,7 +133,7 @@ const Form = () => {
                       <td>
                         <span>{item.qty}</span>
                       </td>
-                      <td>${item.price}</td>
+                      <td>₹{item.price}</td>
                     </tr>
                   ))}
                 </tbody>
