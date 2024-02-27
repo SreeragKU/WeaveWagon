@@ -57,7 +57,7 @@ export default function useCartService() {
       const exist = items.find((x) => x.slug === item.slug)
       const updatedCartItems = exist
         ? items.map((x) =>
-            x.slug === item.slug ? { ...exist, qty: exist.qty + 1 } : x
+            x.slug === item.slug ? { ...x, qty: x.qty + 1 } : x
           )
         : [...items, { ...item, qty: 1 }]
       const { itemsPrice, shippingPrice, taxPrice, totalPrice } =
@@ -70,13 +70,16 @@ export default function useCartService() {
         totalPrice,
       })
     },
+
     decrease: (item: OrderItem) => {
       const exist = items.find((x) => x.slug === item.slug)
       if (!exist) return
       const updatedCartItems =
         exist.qty === 1
           ? items.filter((x: OrderItem) => x.slug !== item.slug)
-          : items.map((x) => (item.slug ? { ...exist, qty: exist.qty - 1 } : x))
+          : items.map((x) =>
+              x.slug === item.slug ? { ...x, qty: x.qty - 1 } : x
+            )
       const { itemsPrice, shippingPrice, taxPrice, totalPrice } =
         calcPrice(updatedCartItems)
       cartStore.setState({
@@ -87,6 +90,7 @@ export default function useCartService() {
         totalPrice,
       })
     },
+
     saveShippingAddress: (shippingAddress: ShippingAddress) => {
       cartStore.setState({
         shippingAddress,
@@ -102,6 +106,7 @@ export default function useCartService() {
         items: [],
       })
     },
+    init: () => cartStore.setState(initialState),
   }
 }
 
