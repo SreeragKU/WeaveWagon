@@ -1,9 +1,18 @@
 'use client'
 import Link from 'next/link'
-import React from 'react'
+import {
+  DollarCircleOutlined,
+  ShoppingCartOutlined,
+  ProfileOutlined,
+  LineChartOutlined,
+  OrderedListOutlined,
+  ShoppingOutlined,
+  UserOutlined,
+} from '@ant-design/icons'
+import { Row, Col } from 'antd'
 import { Bar, Doughnut, Line } from 'react-chartjs-2'
 import useSWR from 'swr'
-
+import { formatNumber } from '@/lib/utils'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -17,7 +26,6 @@ import {
   BarElement,
   ArcElement,
 } from 'chart.js'
-import { formatNumber } from '@/lib/utils'
 
 ChartJS.register(
   CategoryScale,
@@ -120,56 +128,121 @@ const Dashboard = () => {
     <div>
       <div className="my-4 stats inline-grid md:flex  shadow stats-vertical   md:stats-horizontal">
         <div className="stat">
-          <div className="stat-title">Sales</div>
-          <div className="stat-value text-primary">
-            ${formatNumber(summary.ordersPrice)}
-          </div>
-          <div className="stat-desc">
-            <Link href="/admin/orders">View sales</Link>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <div>
+              <div className="stat-title">Sales</div>
+              <div className="stat-value text-primary">
+                ₹{formatNumber(summary.ordersPrice)}
+              </div>
+              <div className="stat-desc">
+                <Link href="/admin/orders">View sales</Link>
+              </div>
+            </div>
+            <DollarCircleOutlined
+              style={{ marginLeft: '50px', fontSize: '5em', color: 'gold' }}
+            />
           </div>
         </div>
         <div className="stat">
-          <div className="stat-title"> Orders</div>
-          <div className="stat-value text-primary">{summary.ordersCount}</div>
-          <div className="stat-desc">
-            <Link href="/admin/orders">View orders</Link>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <div>
+              <div className="stat-title"> Orders</div>
+              <div className="stat-value text-primary">
+                {summary.ordersCount}
+              </div>
+              <div className="stat-desc">
+                <Link href="/admin/orders">View orders</Link>
+              </div>
+            </div>
+            <ShoppingCartOutlined
+              style={{ marginLeft: '50px', fontSize: '5em', color: 'gold' }}
+            />
           </div>
         </div>
         <div className="stat">
-          <div className="stat-title">Products</div>
-          <div className="stat-value text-primary">{summary.productsCount}</div>
-          <div className="stat-desc">
-            <Link href="/admin/products">View products</Link>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <div>
+              <div className="stat-title">Products</div>
+              <div className="stat-value text-primary">
+                {summary.productsCount}
+              </div>
+              <div className="stat-desc">
+                <Link href="/admin/products">View products</Link>
+              </div>
+            </div>
+            <ProfileOutlined
+              style={{ marginLeft: '50px', fontSize: '5em', color: 'gold' }}
+            />
           </div>
         </div>
         <div className="stat">
-          <div className="stat-title">Users</div>
-          <div className="stat-value text-primary">{summary.usersCount}</div>
-          <div className="stat-desc">
-            <Link href="/admin/users">View users</Link>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <div>
+              <div className="stat-title">Users</div>
+              <div className="stat-value text-primary">
+                {summary.usersCount}
+              </div>
+              <div className="stat-desc">
+                <Link href="/admin/users">View users</Link>
+              </div>
+            </div>
+            <UserOutlined
+              style={{ marginLeft: '50px', fontSize: '5em', color: 'gold' }}
+            />
           </div>
         </div>
       </div>
       <div className="grid md:grid-cols-2 gap-4">
-        <div>
-          <h2 className="text-xl py-2">Sales Report</h2>
+        <div className="overflow-x-auto">
+          <h2 className="text-xl py-2 flex items-center">
+            <LineChartOutlined className="mr-2" /> Sales Report
+          </h2>
           <Line data={salesData} />
         </div>
-        <div>
-          <h2 className="text-xl py-2">Orders Report</h2>
+        <div className="overflow-x-auto">
+          <h2 className="text-xl py-2 flex items-center">
+            <OrderedListOutlined className="mr-2" /> Orders Report
+          </h2>
           <Line data={ordersData} />
         </div>
       </div>
       <div className="grid md:grid-cols-2 gap-4">
-        <div>
-          <h2 className="text-xl py-2">Products Report</h2>
-          <div className="flex items-center justify-center h-80 w-96 ">
-            {' '}
+        <div className="overflow-x-auto">
+          <h2 className="text-xl py-2 flex items-center">
+            <ShoppingOutlined className="mr-2" /> Products Report
+          </h2>
+          <div className="flex items-center justify-center h-80 w-96">
             <Doughnut data={productsData} />
           </div>
         </div>
-        <div>
-          <h2 className="text-xl py-2">Users Report</h2>
+        <div className="overflow-x-auto">
+          <h2 className="text-xl py-2 flex items-center">
+            <UserOutlined className="mr-2" /> Users Report
+          </h2>
           <Bar data={usersData} />
         </div>
       </div>

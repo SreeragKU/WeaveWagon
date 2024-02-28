@@ -14,11 +14,11 @@ export const SearchBox = () => {
 
   return (
     <form action="/search" method="GET">
-      <div className="join">
+      <div className="flex flex-col md:flex-row items-center justify-center md:justify-start">
         <select
           name="category"
           defaultValue={category}
-          className="join-item select select-bordered "
+          className="md:mr-2 mb-2 md:mb-0 select select-bordered"
         >
           <option value="all">All</option>
           {categories.map((c: string) => (
@@ -26,12 +26,12 @@ export const SearchBox = () => {
           ))}
         </select>
         <input
-          className="join-item input input-bordered  w-48"
+          className="md:mr-2 mb-2 md:mb-0 input input-bordered w-full md:w-48"
           placeholder="Search"
           defaultValue={q}
           name="q"
         />
-        <button className="join-item btn">Search</button>
+        <button className="btn">Search</button>
       </div>
     </form>
   )

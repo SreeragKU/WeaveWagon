@@ -45,6 +45,7 @@ export const PUT = auth(async (...args: any) => {
     brand,
     countInStock,
     description,
+    banner,
   } = await req.json()
 
   try {
@@ -60,6 +61,7 @@ export const PUT = auth(async (...args: any) => {
       product.brand = brand
       product.countInStock = countInStock
       product.description = description
+      product.banner = banner
 
       const updatedProduct = await product.save()
       return Response.json(updatedProduct)

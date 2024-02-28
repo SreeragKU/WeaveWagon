@@ -26,10 +26,11 @@ export const POST = auth(async (req: any) => {
     )
   }
   await dbConnect()
+  const initialColor = '#3498db'
   const product = new ProductModel({
     name: 'sample name',
     slug: 'sample-name-' + Math.random(),
-    image: '/images/shirt1.jpg',
+    image: '/images/leather1.jpg',
     price: 0,
     category: 'sample category',
     brand: 'sample brand',
@@ -37,6 +38,7 @@ export const POST = auth(async (req: any) => {
     description: 'sample description',
     rating: 0,
     numReviews: 0,
+    banner: '/images/poster-1.jpg',
   })
   try {
     await product.save()

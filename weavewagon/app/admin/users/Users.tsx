@@ -3,15 +3,12 @@
 import { User } from '@/lib/models/UserModel'
 import { formatId } from '@/lib/utils'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import useSWR from 'swr'
 import useSWRMutation from 'swr/mutation'
 
 export default function Users() {
   const { data: users, error } = useSWR(`/api/admin/users`)
-  const router = useRouter()
-
   const { trigger: deleteUser } = useSWRMutation(
     `/api/admin/users`,
     async (url, { arg }: { arg: { userId: string } }) => {

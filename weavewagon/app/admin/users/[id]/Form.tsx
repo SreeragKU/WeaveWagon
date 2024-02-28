@@ -10,7 +10,7 @@ import { formatId } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 
 export default function UserEditForm({ userId }: { userId: string }) {
-  const { data, error } = useSWR(`/api/admin/users/${userId}`)
+  const { data: user, error } = useSWR(`/api/admin/users/${userId}`)
   const router = useRouter()
   const { trigger: updateUser, isMutating: isUpdating } = useSWRMutation(
     `/api/admin/users/${userId}`,
@@ -38,18 +38,18 @@ export default function UserEditForm({ userId }: { userId: string }) {
   } = useForm<User>()
 
   useEffect(() => {
-    if (!data) return
-    setValue('name', data.name)
-    setValue('email', data.email)
-    setValue('isAdmin', data.isAdmin)
-  }, [data, setValue])
+    if (!user) return
+    setValue('name', user.name)
+    setValue('email', user.email)
+    setValue('isAdmin', user.isAdmin)
+  }, [user, setValue])
 
   const formSubmit = async (formData: any) => {
     await updateUser(formData)
   }
 
   if (error) return error.message
-  if (!data) return 'Loading...'
+  if (!user) return 'Loading...'
 
   const FormInput = ({
     id,

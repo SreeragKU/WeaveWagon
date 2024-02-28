@@ -47,9 +47,16 @@ export default function ProductEditForm({ productId }: { productId: string }) {
     setValue('brand', product.brand)
     setValue('countInStock', product.countInStock)
     setValue('description', product.description)
+    setValue('banner', product.banner)
   }, [product, setValue])
 
   const formSubmit = async (formData: any) => {
+    formData.colors = formData.colors
+      .split('\n')
+      .filter((color: string) => color.trim() !== '')
+    formData.sizes = formData.sizes
+      .split('\n')
+      .filter((size: string) => size.trim() !== '')
     await updateProduct(formData)
   }
 
@@ -119,6 +126,37 @@ export default function ProductEditForm({ productId }: { productId: string }) {
       })
     }
   }
+  const uploadBannerHandler = async (e: any) => {
+    const toastId = toast.loading('Uploading banner...')
+    try {
+      const resSign = await fetch('/api/cloudinary-sign', {
+        method: 'POST',
+      })
+      const { signature, timestamp } = await resSign.json()
+      const file = e.target.files[0]
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('signature', signature)
+      formData.append('timestamp', timestamp)
+      formData.append('api_key', process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY!)
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      )
+      const data = await res.json()
+      setValue('banner', data.secure_url)
+      toast.success('Banner uploaded successfully', {
+        id: toastId,
+      })
+    } catch (err: any) {
+      toast.error(err.message, {
+        id: toastId,
+      })
+    }
+  }
 
   return (
     <div>
@@ -146,6 +184,20 @@ export default function ProductEditForm({ productId }: { productId: string }) {
           <FormInput name="Brand" id="brand" required />
           <FormInput name="Description" id="description" required />
           <FormInput name="Count In Stock" id="countInStock" required />
+          <FormInput name="Banner" id="banner" required />
+          <div className="md:flex mb-6">
+            <label className="label md:w-1/5" htmlFor="bannerFile">
+              Upload Banner
+            </label>
+            <div className="md:w-4/5">
+              <input
+                type="file"
+                className="file-input w-full max-w-md"
+                id="bannerFile"
+                onChange={uploadBannerHandler}
+              />
+            </div>
+          </div>
 
           <button
             type="submit"
