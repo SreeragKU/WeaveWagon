@@ -56,6 +56,7 @@ export const config = {
           email: user.email,
           name: user.name,
           isAdmin: user.isAdmin,
+          isSeller: user.isSeller,
         }
       }
       if (trigger === 'update' && session) {

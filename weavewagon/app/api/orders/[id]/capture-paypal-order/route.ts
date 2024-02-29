@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth'
 import dbConnect from '@/lib/dbConnect'
 import OrderModel from '@/lib/models/OrderModel'
+import ProductModel from '@/lib/models/ProductModel'
 import { paypal } from '@/lib/paypal'
 
 export const POST = auth(async (...request: any) => {
@@ -25,6 +26,13 @@ export const POST = auth(async (...request: any) => {
         id: captureData.id,
         status: captureData.status,
         email_address: captureData.payer.email_address,
+      }
+      for (const item of order.items) {
+        const product = await ProductModel.findById(item.product)
+        if (product) {
+          product.countInStock -= item.qty
+          await product.save()
+        }
       }
       const updatedOrder = await order.save()
       return Response.json(updatedOrder)

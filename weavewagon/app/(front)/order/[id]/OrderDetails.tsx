@@ -135,9 +135,7 @@ export default function OrderDetails({
                             width={50}
                             height={50}
                           ></Image>
-                          <span className="px-2">
-                            {item.name} ({item.color} {item.size})
-                          </span>
+                          <span className="px-2">{item.name}</span>
                         </Link>
                       </td>
                       <td>{item.qty}</td>
@@ -180,18 +178,21 @@ export default function OrderDetails({
                   </div>
                 </li>
 
-                {!isPaid && paymentMethod === 'PayPal' && (
-                  <li>
-                    <PayPalScriptProvider
-                      options={{ clientId: paypalClientId }}
-                    >
-                      <PayPalButtons
-                        createOrder={createPayPalOrder}
-                        onApprove={onApprovePayPalOrder}
-                      />
-                    </PayPalScriptProvider>
-                  </li>
-                )}
+                {!session?.user.isAdmin &&
+                  !isPaid &&
+                  paymentMethod === 'PayPal' && (
+                    <li>
+                      <PayPalScriptProvider
+                        options={{ clientId: paypalClientId }}
+                      >
+                        <PayPalButtons
+                          createOrder={createPayPalOrder}
+                          onApprove={onApprovePayPalOrder}
+                        />
+                      </PayPalScriptProvider>
+                    </li>
+                  )}
+
                 {session?.user.isAdmin && (
                   <li>
                     <button

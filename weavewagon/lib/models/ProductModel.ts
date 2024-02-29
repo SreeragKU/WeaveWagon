@@ -38,4 +38,5 @@ export type Product = {
   rating: number
   numReviews: number
   countInStock: number
+  isFeatured: boolean
 }

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import useSWR from 'swr'
 import useSWRMutation from 'swr/mutation'
+import { EditOutlined, DeleteOutlined, StarOutlined } from '@ant-design/icons'
 
 export default function Products() {
   const { data: products, error } = useSWR(`/api/admin/products`)
@@ -50,6 +51,32 @@ export default function Products() {
     }
   )
 
+  const { trigger: toggleFeatureProduct } = useSWRMutation(
+    `/api/admin/products`,
+    async (url, { arg }: { arg: { productId: string } }) => {
+      const toastId = toast.loading('Toggling product feature...')
+      const res = await fetch(`${url}/${arg.productId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ isFeatured: true }),
+      })
+      const data = await res.json()
+      res.ok
+        ? toast.success('Product feature toggled successfully', {
+            id: toastId,
+          })
+        : toast.error(data.message, {
+            id: toastId,
+          })
+    }
+  )
+
+  const handleToggleFeature = (productId: string) => {
+    toggleFeatureProduct({ productId })
+  }
+
   if (error) return 'An error has occurred.'
   if (!products) return 'Loading...'
 
@@ -77,6 +104,7 @@ export default function Products() {
               <th>category</th>
               <th>count in stock</th>
               <th>rating</th>
+              <th>is featured</th>
               <th>actions</th>
             </tr>
           </thead>
@@ -89,13 +117,14 @@ export default function Products() {
                 <td>{product.category}</td>
                 <td>{product.countInStock}</td>
                 <td>{product.rating}</td>
+                <td>{product.isFeatured ? 'Yes' : 'No'}</td>
                 <td>
                   <Link
                     href={`/admin/products/${product._id}`}
                     type="button"
                     className="btn btn-ghost btn-sm"
                   >
-                    Edit
+                    <EditOutlined />
                   </Link>
                   &nbsp;
                   <button
@@ -103,7 +132,15 @@ export default function Products() {
                     type="button"
                     className="btn btn-ghost btn-sm"
                   >
-                    Delete
+                    <DeleteOutlined />
+                  </button>
+                  &nbsp;
+                  <button
+                    onClick={() => handleToggleFeature(product._id!)}
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                  >
+                    <StarOutlined />
                   </button>
                 </td>
               </tr>

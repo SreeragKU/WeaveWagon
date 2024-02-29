@@ -1,4 +1,4 @@
-import { MenuOutlined } from '@ant-design/icons'
+import { MenuOutlined, ShoppingCartOutlined } from '@ant-design/icons'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'

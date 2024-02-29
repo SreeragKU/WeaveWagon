@@ -4,7 +4,7 @@ import UserModel from '@/lib/models/UserModel'
 
 export const GET = auth(async (...args: any) => {
   const [req, { params }] = args
-  if (!req.auth) {
+  if (!req.auth || !req.auth.user?.isAdmin) {
     return Response.json(
       { message: 'unauthorized' },
       {
@@ -27,7 +27,7 @@ export const GET = auth(async (...args: any) => {
 
 export const PUT = auth(async (...p: any) => {
   const [req, { params }] = p
-  if (!req.auth) {
+  if (!req.auth || !req.auth.user?.isAdmin) {
     return Response.json(
       { message: 'unauthorized' },
       {
@@ -40,7 +40,6 @@ export const PUT = auth(async (...p: any) => {
 
   try {
     await dbConnect()
-
     const user = await UserModel.findById(params.id)
     if (user) {
       user.name = name

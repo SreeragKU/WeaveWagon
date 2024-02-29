@@ -2,6 +2,14 @@
 import useCartService from '@/lib/hooks/useCartStore'
 import useLayoutService from '@/lib/hooks/useLayout'
 import { signIn, signOut, useSession } from 'next-auth/react'
+import {
+  ShoppingCartOutlined,
+  UserOutlined,
+  UsergroupAddOutlined,
+  OrderedListOutlined,
+  ProfileFilled,
+  UserDeleteOutlined,
+} from '@ant-design/icons'
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -60,20 +68,25 @@ const Menu = () => {
             )}
           </i>
           <li>
-            <Link className="btn btn-ghost rounded-btn" href="/cart">
-              Cart
-              {mounted && items.length != 0 && (
-                <div className="badge badge-secondary">
-                  {items.reduce((a, c) => a + c.qty, 0)}{' '}
-                </div>
-              )}
-            </Link>
+            {!session?.user?.isAdmin && (
+              <Link className="btn btn-ghost rounded-btn" href="/cart">
+                <ShoppingCartOutlined />
+                Cart
+                {mounted && items.length !== 0 && (
+                  <div className="badge badge-secondary">
+                    {items.reduce((a, c) => a + c.qty, 0)}{' '}
+                  </div>
+                )}
+              </Link>
+            )}
           </li>
+
           {session && session.user ? (
             <>
               <li>
                 <div className="dropdown dropdown-bottom dropdown-end">
                   <label tabIndex={0} className="btn btn-ghost rounded-btn">
+                    <UserOutlined />
                     {session.user.name}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -96,18 +109,29 @@ const Menu = () => {
                   >
                     {session.user.isAdmin && (
                       <li onClick={handleClick}>
-                        <Link href="/admin/dashboard">Admin Dashboard</Link>
+                        <Link href="/admin/dashboard">
+                          <UsergroupAddOutlined />
+                          Admin Dashboard
+                        </Link>
                       </li>
                     )}
-
+                    {!session.user.isAdmin && (
+                      <li onClick={handleClick}>
+                        <Link href="/order-history">
+                          <OrderedListOutlined />
+                          Order history{' '}
+                        </Link>
+                      </li>
+                    )}
                     <li onClick={handleClick}>
-                      <Link href="/order-history">Order history </Link>
-                    </li>
-                    <li onClick={handleClick}>
-                      <Link href="/profile">Profile</Link>
+                      <Link href="/profile">
+                        <ProfileFilled />
+                        Profile
+                      </Link>
                     </li>
                     <li onClick={handleClick}>
                       <button type="button" onClick={signoutHandler}>
+                        <UserDeleteOutlined />
                         Sign out
                       </button>
                     </li>

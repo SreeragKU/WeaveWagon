@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
+import { LinkOutlined } from '@ant-design/icons'
 
 export default function MyOrders() {
   const router = useRouter()
@@ -38,7 +39,7 @@ export default function MyOrders() {
             <tr key={order._id}>
               <td>{order._id.substring(20, 24)}</td>
               <td>{order.createdAt.substring(0, 10)}</td>
-              <td>${order.totalPrice}</td>
+              <td>₹{order.totalPrice}</td>
               <td>
                 {order.isPaid && order.paidAt
                   ? `${order.paidAt.substring(0, 10)}`
@@ -50,7 +51,16 @@ export default function MyOrders() {
                   : 'not delivered'}
               </td>
               <td>
-                <Link href={`/order/${order._id}`} passHref>
+                <Link
+                  href={`/order/${order._id}`}
+                  passHref
+                  style={{
+                    color: 'goldenrod',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <LinkOutlined style={{ marginRight: 4 }} />
                   Details
                 </Link>
               </td>
