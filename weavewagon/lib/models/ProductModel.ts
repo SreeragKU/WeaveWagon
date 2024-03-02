@@ -14,6 +14,7 @@ const productSchema = new mongoose.Schema(
     description: { type: String, required: true },
     isFeatured: { type: Boolean, default: false },
     banner: String,
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },
   {
     timestamps: true,
@@ -39,4 +40,5 @@ export type Product = {
   numReviews: number
   countInStock: number
   isFeatured: boolean
+  createdBy: string
 }

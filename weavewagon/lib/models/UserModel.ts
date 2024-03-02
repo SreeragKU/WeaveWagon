@@ -5,6 +5,7 @@ export type User = {
   name: string
   email: string
   isAdmin: boolean
+  isSeller: boolean
 }
 
 const UserSchema = new mongoose.Schema(
@@ -23,6 +24,7 @@ const UserSchema = new mongoose.Schema(
       required: true,
     },
     isAdmin: { type: Boolean, required: true, default: false },
+    isSeller: { type: Boolean, required: true, default: false },
   },
   { timestamps: true }
 )

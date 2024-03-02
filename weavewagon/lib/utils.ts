@@ -13,3 +13,9 @@ export const formatNumber = (x: number) => {
 export const formatId = (x: string) => {
   return `..${x.substring(20, 24)}`
 }
+
+export const formatsellerNumber = (number: number): string => {
+  return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
+    number
+  )
+}

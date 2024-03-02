@@ -28,6 +28,7 @@ const Menu = () => {
   }
 
   const { data: session } = useSession()
+  console.log('User:', session?.user)
 
   const { theme, toggleTheme } = useLayoutService()
 
@@ -112,6 +113,14 @@ const Menu = () => {
                         <Link href="/admin/dashboard">
                           <UsergroupAddOutlined />
                           Admin Dashboard
+                        </Link>
+                      </li>
+                    )}
+                    {session.user.isSeller && (
+                      <li onClick={handleClick}>
+                        <Link href="/seller/dashboard">
+                          <UsergroupAddOutlined />
+                          Seller Dashboard
                         </Link>
                       </li>
                     )}

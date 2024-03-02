@@ -25,6 +25,7 @@ export default function Users() {
               <th>name</th>
               <th>email</th>
               <th>admin</th>
+              <th>seller</th>
               <th>actions</th>
             </tr>
           </thead>
@@ -35,6 +36,7 @@ export default function Users() {
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.isAdmin ? 'YES' : 'NO'}</td>
+                <td>{user.isSeller ? 'YES' : 'NO'}</td>
 
                 <td>
                   <Link

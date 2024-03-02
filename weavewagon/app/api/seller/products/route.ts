@@ -3,7 +3,7 @@ import dbConnect from '@/lib/dbConnect'
 import ProductModel from '@/lib/models/ProductModel'
 
 export const GET = auth(async (req: any) => {
-  if (!req.auth || !req.auth.user?.isAdmin) {
+  if (!req.auth || !req.auth.user?.isSeller) {
     return Response.json(
       { message: 'unauthorized' },
       {
@@ -12,12 +12,13 @@ export const GET = auth(async (req: any) => {
     )
   }
   await dbConnect()
-  const products = await ProductModel.find()
+  const userId = req.auth.user._id
+  const products = await ProductModel.find({ createdBy: userId })
   return Response.json(products)
 }) as any
 
 export const POST = auth(async (req: any) => {
-  if (!req.auth || !req.auth.user?.isAdmin) {
+  if (!req.auth || !req.auth.user?.isSeller) {
     return Response.json(
       { message: 'unauthorized' },
       {

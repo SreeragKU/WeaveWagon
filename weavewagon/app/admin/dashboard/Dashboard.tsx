@@ -9,7 +9,6 @@ import {
   ShoppingOutlined,
   UserOutlined,
 } from '@ant-design/icons'
-import { Row, Col } from 'antd'
 import { Bar, Doughnut, Line } from 'react-chartjs-2'
 import useSWR from 'swr'
 import { formatNumber } from '@/lib/utils'

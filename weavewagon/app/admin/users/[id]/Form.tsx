@@ -42,6 +42,7 @@ export default function UserEditForm({ userId }: { userId: string }) {
     setValue('name', user.name)
     setValue('email', user.email)
     setValue('isAdmin', user.isAdmin)
+    setValue('isSeller', user.isSeller)
   }, [user, setValue])
 
   const formSubmit = async (formData: any) => {
@@ -101,6 +102,19 @@ export default function UserEditForm({ userId }: { userId: string }) {
                 type="checkbox"
                 className="toggle"
                 {...register('isAdmin')}
+              />
+            </div>
+          </div>
+          <div className="md:flex my-3">
+            <label className="label md:w-1/5" htmlFor="isSeller">
+              Seller
+            </label>
+            <div className="md:w-4/5">
+              <input
+                id="isSeller"
+                type="checkbox"
+                className="toggle"
+                {...register('isSeller')}
               />
             </div>
           </div>
