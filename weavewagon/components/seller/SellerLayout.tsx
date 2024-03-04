@@ -42,14 +42,6 @@ const SellerLayout = async ({
                 Products
               </Link>
             </li>
-            <li>
-              <Link
-                className={'orders' === activeItem ? 'active' : ''}
-                href="/seller/orders"
-              >
-                Orders
-              </Link>
-            </li>
           </ul>
         </div>
         <div className="md:col-span-4 px-4">{children}</div>

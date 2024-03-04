@@ -28,7 +28,6 @@ const Menu = () => {
   }
 
   const { data: session } = useSession()
-  console.log('User:', session?.user)
 
   const { theme, toggleTheme } = useLayoutService()
 

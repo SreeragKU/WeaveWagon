@@ -30,6 +30,7 @@ export const PUT = auth(async (...args: any) => {
       name,
       slug,
       price,
+      initialPrice,
       category,
       image,
       brand,
@@ -60,6 +61,7 @@ export const PUT = auth(async (...args: any) => {
     product.name = name
     product.slug = slug
     product.price = price
+    product.initialPrice = initialPrice
     product.category = category
     product.image = image
     product.brand = brand

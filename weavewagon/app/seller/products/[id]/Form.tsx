@@ -40,10 +40,9 @@ export default function ProductEditForm({ productId }: { productId: string }) {
 
   useEffect(() => {
     if (!product) return
-    const initialPrice = calculateTotalPrice(product.price, false)
     setValue('name', product.name)
     setValue('slug', product.slug)
-    setValue('price', initialPrice)
+    setValue('price', product.initialPrice)
     setValue('image', product.image)
     setValue('category', product.category)
     setValue('brand', product.brand)
@@ -70,8 +69,9 @@ export default function ProductEditForm({ productId }: { productId: string }) {
   }
 
   const formSubmit = async (formData: any) => {
-    const totalPrice = calculateTotalPrice(parseFloat(formData.price), true)
-    await updateProduct({ ...formData, price: totalPrice })
+    const price = parseFloat(formData.price)
+    const totalPrice = calculateTotalPrice(price, true)
+    await updateProduct({ ...formData, price: totalPrice, initialPrice: price })
   }
 
   if (error) return error.message

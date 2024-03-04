@@ -1,7 +1,7 @@
-import dbConnect from '@/lib/dbConnect'
 import { auth } from '@/lib/auth'
+import dbConnect from '@/lib/dbConnect'
+import OrderModel, { OrderItem } from '@/lib/models/OrderModel'
 import ProductModel from '@/lib/models/ProductModel'
-import OrderModel from '@/lib/models/OrderModel'
 
 export const GET = auth(async (...request: any) => {
   const [req, { params }] = request
@@ -17,50 +17,43 @@ export const GET = auth(async (...request: any) => {
 
   const user = req.auth.user
 
-  const productsCount = await ProductModel.countDocuments({
+  const products = await ProductModel.find({ createdBy: user._id })
+  const totalRevenue = products.reduce((acc, curr) => acc + curr.price, 0)
+
+  const featuredProductsCount = await ProductModel.countDocuments({
     createdBy: user._id,
+    isFeatured: true,
   })
 
-  const productsData = await ProductModel.aggregate([
-    {
-      $match: { createdBy: user._id },
-    },
-    {
-      $group: {
-        _id: '$category',
-        totalProducts: { $sum: 1 },
-      },
-    },
-    { $sort: { _id: 1 } },
-  ])
+  const orders = await OrderModel.find({ user: user._id })
+  const orderedProductsCount = orders.reduce(
+    (acc, curr) =>
+      acc + curr.items.reduce((a: number, c: OrderItem) => a + c.qty, 0),
+    0
+  )
 
-  const salesData = await OrderModel.aggregate([
+  const topProductsByRevenue = await OrderModel.aggregate([
     {
-      $lookup: {
-        from: 'products',
-        localField: 'orderItems.productId',
-        foreignField: '_id',
-        as: 'products',
-      },
-    },
-    {
-      $match: {
-        'products.createdBy': user._id,
-      },
+      $unwind: '$items',
     },
     {
       $group: {
-        _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } },
-        totalOrders: { $sum: 1 },
-        totalSales: { $sum: '$totalPrice' },
+        _id: '$items.product',
+        totalRevenue: { $sum: { $multiply: ['$items.qty', '$items.price'] } },
       },
     },
-    { $sort: { _id: 1 } },
+    {
+      $sort: { totalRevenue: -1 },
+    },
+    {
+      $limit: 5,
+    },
   ])
 
   return Response.json({
-    productsCount,
-    productsData,
-    salesData,
+    totalRevenue,
+    featuredProductsCount,
+    orderedProductsCount,
+    topProductsByRevenue,
   })
 })

@@ -1,37 +1,21 @@
 'use client'
-
 import Link from 'next/link'
-import {
-  DollarCircleOutlined,
-  ShoppingCartOutlined,
-  ProfileOutlined,
-  LineChartOutlined,
-} from '@ant-design/icons'
-import { Line } from 'react-chartjs-2'
+import { ProfileOutlined } from '@ant-design/icons'
 import useSWR from 'swr'
-import { formatsellerNumber } from '@/lib/utils'
+import { Doughnut, Bar } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
   Title,
   Tooltip,
-  Filler,
   Legend,
+  LinearScale,
+  CategoryScale,
+  BarElement,
 } from 'chart.js'
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Filler,
-  Legend
-)
+import { formatsellerNumber } from '@/lib/utils'
+
+ChartJS.register(Title, Tooltip, Legend, LinearScale, CategoryScale, BarElement)
 
 const Dashboard = () => {
   const { data: summary, error } = useSWR(`/api/seller/orders/summary`)
@@ -39,68 +23,56 @@ const Dashboard = () => {
   if (error) return <div>{error.message}</div>
   if (!summary) return <div>Loading...</div>
 
-  const salesData = {
-    labels: summary.salesData.map((x: { _id: string }) => x._id),
+  interface TopProductsByRevenueItem {
+    _id: { name: string }
+    totalRevenue: number
+  }
+
+  const topProductsByRevenueData = {
+    labels: summary.topProductsByRevenue.map(
+      (product: TopProductsByRevenueItem) => product._id.name
+    ),
     datasets: [
       {
-        fill: true,
-        label: 'Sales',
-        data: summary.salesData.map(
-          (x: { totalSales: number }) => x.totalSales
+        label: 'Revenue',
+        backgroundColor: 'rgba(75,192,192,0.4)',
+        borderColor: 'rgba(75,192,192,1)',
+        borderWidth: 1,
+        hoverBackgroundColor: 'rgba(75,192,192,0.6)',
+        hoverBorderColor: 'rgba(75,192,192,1)',
+        data: summary.topProductsByRevenue.map(
+          (product: TopProductsByRevenueItem) => product.totalRevenue
         ),
-        borderColor: 'rgb(53, 162, 235)',
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
       },
     ],
+  }
+
+  const monthlyRevenueChartOptions = {
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Revenue ($)',
+        },
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Month',
+        },
+      },
+    },
   }
 
   return (
     <div>
       <div className="my-4 stats inline-grid md:flex  shadow stats-vertical   md:stats-horizontal">
-        <div className="stat">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div>
-              <div className="stat-title">Sales</div>
-              <div className="stat-value text-primary">
-                ₹{formatsellerNumber(summary.ordersPrice)}
-              </div>
-              <div className="stat-desc">
-                <Link href="/seller/orders">View sales</Link>
-              </div>
-            </div>
-            <DollarCircleOutlined
-              style={{ marginLeft: '50px', fontSize: '5em', color: 'gold' }}
-            />
-          </div>
-        </div>
-        <div className="stat">
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div>
-              <div className="stat-title"> Orders</div>
-              <div className="stat-value text-primary">
-                {summary.ordersCount}
-              </div>
-              <div className="stat-desc">
-                <Link href="/seller/orders">View orders</Link>
-              </div>
-            </div>
-            <ShoppingCartOutlined
-              style={{ marginLeft: '50px', fontSize: '5em', color: 'gold' }}
-            />
-          </div>
-        </div>
         <div className="stat">
           <div
             style={{
@@ -123,12 +95,28 @@ const Dashboard = () => {
             />
           </div>
         </div>
+        <div className="stat">
+          <div className="stat-title">Total Revenue</div>
+          <div className="stat-value text-primary">
+            ₹{formatsellerNumber(summary.totalRevenue)}
+          </div>
+        </div>
+        <div className="stat">
+          <div className="stat-title">Featured Products</div>
+          <div className="stat-value text-primary">
+            {summary.featuredProductsCount}
+          </div>
+        </div>
+        <div className="stat">
+          <div className="stat-title">Ordered Products</div>
+          <div className="stat-value text-primary">
+            {summary.orderedProductsCount}
+          </div>
+        </div>
       </div>
-      <div className="overflow-x-auto">
-        <h2 className="text-xl py-2 flex items-center">
-          <LineChartOutlined className="mr-2" /> Sales Report
-        </h2>
-        <Line data={salesData} />
+      <div className="my-4">
+        <h2 className="text-lg font-semibold mb-4">Top Products by Revenue</h2>
+        <Bar data={topProductsByRevenueData} />
       </div>
     </div>
   )

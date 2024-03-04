@@ -4,6 +4,7 @@ import productService from '@/lib/services/productService'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Rating } from '@/components/products/Rating'
+import { ArrowLeftOutlined } from '@ant-design/icons'
 
 export async function generateMetadata({
   params,
@@ -31,9 +32,15 @@ export default async function ProductDetails({
   }
   return (
     <>
-      <div className="my-2">
-        <Link href="/">back to products</Link>
+      <div className="my-2 flex items-center">
+        <Link href="/">
+          <div className="flex items-center text-blue-500 hover:text-blue-700 transition-colors">
+            <ArrowLeftOutlined style={{ fontSize: '1.2rem' }} />
+            <span className="ml-1 font-semibold">Back to Products</span>
+          </div>
+        </Link>
       </div>
+
       <div className="grid md:grid-cols-4 md:gap-3">
         <div className="md:col-span-2">
           <Image
