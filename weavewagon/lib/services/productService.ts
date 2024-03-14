@@ -4,6 +4,29 @@ import ProductModel, { Product } from '@/lib/models/ProductModel'
 
 export const revalidate = 3600
 
+const putRating = async (productId: string, rating: number) => {
+  await dbConnect()
+
+  const product = await ProductModel.findById(productId)
+  if (!product) {
+    throw new Error('Product not found')
+  }
+
+  const newNumReviews = product.numReviews + 1
+  const newRating =
+    (product.rating * product.numReviews + rating) / newNumReviews
+
+  await ProductModel.findByIdAndUpdate(productId, {
+    numReviews: newNumReviews,
+    rating: newRating,
+  })
+
+  return {
+    numReviews: newNumReviews,
+    rating: newRating,
+  }
+}
+
 const getLatest = cache(async () => {
   await dbConnect()
   const products = await ProductModel.find({}).sort({ _id: -1 }).limit(6).lean()
@@ -122,5 +145,6 @@ const productService = {
   getBySlug,
   getByQuery,
   getCategories,
+  putRating,
 }
 export default productService

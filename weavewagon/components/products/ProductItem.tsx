@@ -7,14 +7,14 @@ import { Rating } from './Rating'
 export default function ProductItem({ product }: { product: Product }) {
   return (
     <div className="card bg-base-300 shadow-xl mb-4">
-      <figure>
+      <figure style={{ height: '300px', width: '100%', position: 'relative' }}>
         <Link href={`/product/${product.slug}`}>
           <Image
             src={product.image}
             alt={product.name}
-            width={300}
-            height={300}
-            className="object-cover h-64 w-full"
+            layout="fill"
+            objectFit="cover"
+            objectPosition="center"
           />
         </Link>
       </figure>
