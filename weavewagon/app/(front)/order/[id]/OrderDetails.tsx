@@ -1,12 +1,16 @@
 'use client'
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js'
 import { OrderItem } from '@/lib/models/OrderModel'
+import { Product } from '@/lib/models/ProductModel'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import useSWR from 'swr'
 import useSWRMutation from 'swr/mutation'
+import { useState } from 'react'
+import { StarOutlined } from '@ant-design/icons'
+import { configConsumerProps } from 'antd/es/config-provider'
 
 export default function OrderDetails({
   orderId,
@@ -15,6 +19,8 @@ export default function OrderDetails({
   orderId: string
   paypalClientId: string
 }) {
+  const [ratings, setRatings] = useState<{ [key: string]: number }>({})
+
   const { trigger: deliverOrder, isMutating: isDelivering } = useSWRMutation(
     `/api/orders/${orderId}`,
     async (url) => {
@@ -58,6 +64,32 @@ export default function OrderDetails({
   }
 
   const { data, error } = useSWR(`/api/orders/${orderId}`)
+
+  function onItemRatingChange(slug: string, rating: number) {
+    setRatings({ ...ratings, [slug]: rating })
+  }
+
+  function submitRating(slug: string, rating: number) {
+    console.log('Submitting rating for:', slug, 'with rating:', rating)
+    fetch(`/api/products/${slug}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ slug, rating }), // Include slug and rating in the body
+    })
+      .then((response) => {
+        if (response.ok) {
+          toast.success('Rating submitted successfully')
+        } else {
+          toast.error('Failed to submit rating')
+        }
+      })
+      .catch((error) => {
+        console.error('Error submitting rating:', error)
+        toast.error('Failed to submit rating')
+      })
+  }
 
   if (error) return error.message
   if (!data) return 'Loading...'
@@ -112,18 +144,20 @@ export default function OrderDetails({
           <div className="card bg-base-300 mt-4">
             <div className="card-body">
               <h2 className="card-title">Items</h2>
-              <table className="table">
+              <table className="table w-full">
                 <thead>
                   <tr>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
+                    <th className="py-2">Item</th>
+                    <th className="py-2">Quantity</th>
+                    <th className="py-2">Price</th>
+                    {isDelivered && <th className="py-2">Rating</th>}
+                    {isDelivered && <th className="py-2">Action</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {items.map((item: OrderItem) => (
-                    <tr key={item.slug}>
-                      <td>
+                    <tr key={item.slug} className="border-b">
+                      <td className="py-3">
                         <Link
                           href={`/product/${item.slug}`}
                           className="flex items-center"
@@ -133,12 +167,62 @@ export default function OrderDetails({
                             alt={item.name}
                             width={50}
                             height={50}
-                          ></Image>
+                          />
                           <span className="px-2">{item.name}</span>
                         </Link>
                       </td>
-                      <td>{item.qty}</td>
-                      <td>₹{item.price}</td>
+                      <td className="py-3">{item.qty}</td>
+                      <td className="py-3">₹{item.price}</td>
+                      {isDelivered && (
+                        <>
+                          <td className="py-3 flex items-center">
+                            <input
+                              className="w-32 mr-2 mt-4"
+                              type="range"
+                              min="0"
+                              max="5"
+                              step="0.5"
+                              value={
+                                ratings[item.slug] !== undefined
+                                  ? ratings[item.slug]
+                                  : '0'
+                              }
+                              onChange={(e) =>
+                                onItemRatingChange(
+                                  item.slug,
+                                  parseFloat(e.target.value)
+                                )
+                              }
+                            />
+                            <br></br>
+                            <StarOutlined
+                              style={{
+                                fontSize: '1rem',
+                                marginRight: '0.5rem',
+                                marginTop: '0.8rem',
+                              }}
+                            />
+                            <span
+                              style={{
+                                marginRight: '0.5rem',
+                                marginTop: '0.8rem',
+                              }}
+                            >
+                              {ratings[item.slug] || '0'}
+                            </span>
+                          </td>
+                          <td className="py-3">
+                            <button
+                              className="btn"
+                              onClick={() =>
+                                submitRating(item.slug, ratings[item.slug] || 0)
+                              }
+                            >
+                              Submit Rating
+                            </button>
+                          </td>
+                        </>
+                      )}
                     </tr>
                   ))}
                 </tbody>

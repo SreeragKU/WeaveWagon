@@ -79,6 +79,7 @@ export type OrderItem = {
   price: number
   color: string
   size: string
+  rating?: number
 }
 
 export type ShippingAddress = {
