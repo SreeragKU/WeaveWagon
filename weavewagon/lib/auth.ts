@@ -45,6 +45,7 @@ export const config = {
         /\/order\/(.*)/,
         /\/admin/,
         /\/seller/,
+        /\/distribution/,
       ]
       const { pathname } = request.nextUrl
       if (protectedPaths.some((p) => p.test(pathname))) return !!auth

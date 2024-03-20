@@ -18,7 +18,6 @@ export const GET = auth(async (...request: any) => {
   const user = req.auth.user
 
   const products = await ProductModel.find({ createdBy: user._id })
-  const totalRevenue = products.reduce((acc, curr) => acc + curr.price, 0)
 
   const featuredProductsCount = await ProductModel.countDocuments({
     createdBy: user._id,
@@ -26,12 +25,39 @@ export const GET = auth(async (...request: any) => {
   })
 
   const orders = await OrderModel.find({ user: user._id })
+
   const orderedProductsCount = orders.reduce(
     (acc, curr) =>
       acc + curr.items.reduce((a: number, c: OrderItem) => a + c.qty, 0),
     0
   )
 
+  const productDetails = await Promise.all(
+    products.map(async (product) => {
+      const numReviews = product.numReviews
+      const rating = product.rating
+      return {
+        name: product.name,
+        numReviews: numReviews,
+        rating: rating,
+      }
+    })
+  )
+
+  let totalRevenueFromOrders = 0
+  for (const product of products) {
+    const orders = await OrderModel.find({ 'items.product': product._id })
+
+    for (const order of orders) {
+      const orderItem = order.items.find(
+        (item: OrderItem) => item.product.toString() === product._id.toString()
+      )
+
+      if (orderItem) {
+        totalRevenueFromOrders += orderItem.qty * product.price
+      }
+    }
+  }
   const topProductsByRevenue = await OrderModel.aggregate([
     {
       $unwind: '$items',
@@ -51,9 +77,10 @@ export const GET = auth(async (...request: any) => {
   ])
 
   return Response.json({
-    totalRevenue,
+    totalRevenue: totalRevenueFromOrders,
     featuredProductsCount,
     orderedProductsCount,
     topProductsByRevenue,
+    productDetails,
   })
 })

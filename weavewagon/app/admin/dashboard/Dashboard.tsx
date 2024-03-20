@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import {
-  DollarCircleOutlined,
+  RiseOutlined,
   ShoppingCartOutlined,
   ProfileOutlined,
   LineChartOutlined,
@@ -143,7 +143,7 @@ const Dashboard = () => {
                 <Link href="/admin/orders">View sales</Link>
               </div>
             </div>
-            <DollarCircleOutlined
+            <RiseOutlined
               style={{ marginLeft: '50px', fontSize: '5em', color: 'gold' }}
             />
           </div>

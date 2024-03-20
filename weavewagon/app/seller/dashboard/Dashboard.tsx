@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { ProfileOutlined } from '@ant-design/icons'
 import useSWR from 'swr'
-import { Doughnut, Bar } from 'react-chartjs-2'
+import { Line, Bar } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
   Title,
@@ -11,11 +11,24 @@ import {
   LinearScale,
   CategoryScale,
   BarElement,
+  ArcElement,
+  PointElement,
+  LineElement,
 } from 'chart.js'
 
 import { formatsellerNumber } from '@/lib/utils'
 
-ChartJS.register(Title, Tooltip, Legend, LinearScale, CategoryScale, BarElement)
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  LinearScale,
+  CategoryScale,
+  BarElement,
+  ArcElement,
+  PointElement,
+  LineElement
+)
 
 const Dashboard = () => {
   const { data: summary, error } = useSWR(`/api/seller/orders/summary`)
@@ -23,49 +36,43 @@ const Dashboard = () => {
   if (error) return <div>{error.message}</div>
   if (!summary) return <div>Loading...</div>
 
-  interface TopProductsByRevenueItem {
-    _id: { name: string }
-    totalRevenue: number
-  }
+  const productDetails: { name: string; numReviews: number; rating: number }[] =
+    summary.productDetails || []
 
-  const topProductsByRevenueData = {
-    labels: summary.topProductsByRevenue.map(
-      (product: TopProductsByRevenueItem) => product._id.name
-    ),
+  const productNames = productDetails.map((product) => product.name)
+  const numReviewsData = productDetails.map((product) => product.numReviews)
+  const ratingData = productDetails.map((product) => product.rating)
+
+  const numReviewsChartData = {
+    labels: productNames,
     datasets: [
       {
-        label: 'Revenue',
-        backgroundColor: 'rgba(75,192,192,0.4)',
-        borderColor: 'rgba(75,192,192,1)',
+        label: 'Number of Reviews',
+        data: numReviewsData,
+        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1,
-        hoverBackgroundColor: 'rgba(75,192,192,0.6)',
-        hoverBorderColor: 'rgba(75,192,192,1)',
-        data: summary.topProductsByRevenue.map(
-          (product: TopProductsByRevenueItem) => product.totalRevenue
-        ),
       },
     ],
   }
 
-  const monthlyRevenueChartOptions = {
-    plugins: {
-      legend: {
-        display: false,
+  const ratingChartData = {
+    labels: productNames,
+    datasets: [
+      {
+        label: 'Rating',
+        data: ratingData,
+        fill: false,
+        borderColor: 'rgba(255, 206, 86, 1)',
+        tension: 0.1,
       },
-    },
+    ],
+  }
+
+  const options = {
     scales: {
       y: {
         beginAtZero: true,
-        title: {
-          display: true,
-          text: 'Revenue ($)',
-        },
-      },
-      x: {
-        title: {
-          display: true,
-          text: 'Month',
-        },
       },
     },
   }
@@ -114,9 +121,18 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <div className="my-4">
-        <h2 className="text-lg font-semibold mb-4">Top Products by Revenue</h2>
-        <Bar data={topProductsByRevenueData} />
+      <div
+        className="chart-container overflow-x-auto"
+        style={{ height: '400px', width: '100%' }}
+      >
+        <div>
+          <h2>Number of Reviews</h2>
+          <Bar data={numReviewsChartData} options={options} />
+        </div>
+        <div>
+          <h2>Rating</h2>
+          <Line data={ratingChartData} options={options} />
+        </div>
       </div>
     </div>
   )
