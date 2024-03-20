@@ -69,25 +69,33 @@ export default function OrderDetails({
     setRatings({ ...ratings, [slug]: rating })
   }
 
-  function submitRating(slug: string, rating: number) {
-    console.log('Submitting rating for:', slug, 'with rating:', rating)
-    fetch(`/api/products/${slug}`, {
+  function submitRating(slug: string, rating: number): Promise<void> {
+    const confirmed = window.confirm(
+      'Are you sure you want to submit this rating?'
+    )
+    if (!confirmed) {
+      return Promise.reject('Rating submission cancelled by user')
+    }
+
+    return fetch(`/api/products/${slug}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ slug, rating }), // Include slug and rating in the body
+      body: JSON.stringify({ slug, rating }),
     })
       .then((response) => {
         if (response.ok) {
           toast.success('Rating submitted successfully')
         } else {
           toast.error('Failed to submit rating')
+          return Promise.reject('Failed to submit rating')
         }
       })
       .catch((error) => {
         console.error('Error submitting rating:', error)
         toast.error('Failed to submit rating')
+        return Promise.reject('Failed to submit rating')
       })
   }
 

@@ -1,7 +1,6 @@
 import { auth } from '@/lib/auth'
 import dbConnect from '@/lib/dbConnect'
-import { Product } from '@/lib/models/ProductModel'
-import ProductModel from '@/lib/models/ProductModel'
+import ProductModel, { Product } from '@/lib/models/ProductModel'
 
 export const PUT = auth(async (req) => {
   if (!req.auth) {
@@ -9,10 +8,17 @@ export const PUT = auth(async (req) => {
   }
 
   const { slug, rating } = await req.json()
+  const userEmail = req.auth.user?.email
+  if (!userEmail) {
+    return Response.json(
+      { message: 'User email not found in request' },
+      { status: 400 }
+    )
+  }
 
   await dbConnect()
   try {
-    const product: Product | null = await ProductModel.findOne({ slug })
+    let product: Product | null = await ProductModel.findOne({ slug })
 
     if (!product) {
       return Response.json(
@@ -22,18 +28,25 @@ export const PUT = auth(async (req) => {
         }
       )
     }
-
+    const userRating = product.ratings.find((r) => r.userEmail === userEmail)
     const { rating: prevRating, numReviews: prevNumReviews } = product
-    const newNumReviews = prevNumReviews + 1
-    const newRating = (prevRating * prevNumReviews + rating) / newNumReviews
-
-    await ProductModel.findOneAndUpdate(
-      { slug },
-      { rating: newRating, numReviews: newNumReviews }
-    )
+    let newRating = 0
+    if (userRating) {
+      newRating =
+        (prevRating * prevNumReviews - userRating.rating + rating) /
+        prevNumReviews
+      userRating.rating = rating
+    } else {
+      newRating = (prevRating * prevNumReviews + rating) / (prevNumReviews + 1)
+      product.ratings.push({ userEmail, rating })
+      product.numReviews += 1
+    }
+    product.rating = newRating
+    await product.save()
+    product = await ProductModel.findOne({ slug })
 
     return Response.json(
-      { message: 'Rating updated successfully' },
+      { message: 'Rating updated successfully', product },
       {
         status: 200,
       }

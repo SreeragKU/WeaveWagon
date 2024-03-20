@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { Schema, Document } from 'mongoose'
 
 const productSchema = new mongoose.Schema(
   {
@@ -10,6 +10,7 @@ const productSchema = new mongoose.Schema(
     price: { type: Number, required: true },
     brand: { type: String, required: true },
     rating: { type: Number, required: true, default: 0 },
+    ratings: [{ userEmail: String, rating: Number }],
     numReviews: { type: Number, required: true, default: 0 },
     countInStock: { type: Number, required: true, default: 0 },
     description: { type: String, required: true },
@@ -22,12 +23,12 @@ const productSchema = new mongoose.Schema(
   }
 )
 
-const ProductModel =
-  mongoose.models.Product || mongoose.model('Product', productSchema)
+export interface ProductRating {
+  userEmail: string
+  rating: number
+}
 
-export default ProductModel
-
-export type Product = {
+export interface Product extends Document {
   _id?: string
   name: string
   slug: string
@@ -43,4 +44,10 @@ export type Product = {
   countInStock: number
   isFeatured: boolean
   createdBy: string
+  ratings: ProductRating[]
 }
+
+const ProductModel =
+  mongoose.models.Product || mongoose.model('Product', productSchema)
+
+export default ProductModel

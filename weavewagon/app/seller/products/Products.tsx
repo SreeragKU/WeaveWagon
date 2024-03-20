@@ -73,7 +73,7 @@ export default function Products() {
         {products.map((product: Product) => (
           <div
             key={product._id}
-            className="max-w-[400px] bg-white rounded-lg p-4 shadow-md mb-6"
+            className="w-full bg-white rounded-lg p-4 shadow-md mb-6"
             style={{
               backgroundImage: `url(${product.image})`,
               backgroundSize: 'cover',
