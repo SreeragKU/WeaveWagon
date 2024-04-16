@@ -93,10 +93,7 @@ export default function ProductEditForm({ productId }: { productId: string }) {
           })}
           className="input input-bordered w-full max-w-md"
         />
-        {/* @ts-ignore */}
-        {errors[id]?.message && (
-          <div className="text-error">{errors[id]?.message}</div>
-        )}
+        {errors[id] && <div className="text-error">{errors[id].message}</div>}
       </div>
     </div>
   )
