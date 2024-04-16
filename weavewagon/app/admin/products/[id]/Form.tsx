@@ -1,4 +1,5 @@
 'use client'
+import React, { ReactNode } from 'react'
 import useSWRMutation from 'swr/mutation'
 import useSWR from 'swr'
 import toast from 'react-hot-toast'
@@ -93,7 +94,7 @@ export default function ProductEditForm({ productId }: { productId: string }) {
           className="input input-bordered w-full max-w-md"
         />
         {errors[id]?.message && (
-          <div className="text-error">{errors[id]?.message}</div>
+          <div className="text-error">{String(errors[id]?.message)}</div>
         )}
       </div>
     </div>
