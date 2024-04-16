@@ -10,9 +10,7 @@ import { formatId } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 
 export default function ProductEditForm({ productId }: { productId: string }) {
-  const { data: product, error } = useSWR<Product | undefined>(
-    `/api/admin/products/${productId}`
-  )
+  const { data: product, error } = useSWR(`/api/admin/products/${productId}`)
   const router = useRouter()
   const { trigger: updateProduct, isMutating: isUpdating } = useSWRMutation(
     `/api/admin/products/${productId}`,
@@ -41,15 +39,15 @@ export default function ProductEditForm({ productId }: { productId: string }) {
 
   useEffect(() => {
     if (!product) return
-    setValue('name', product!.name as string)
-    setValue('slug', product!.slug as string)
-    setValue('price', product!.price as number)
-    setValue('image', product!.image as string)
-    setValue('category', product!.category as string)
-    setValue('brand', product!.brand as string)
-    setValue('countInStock', product!.countInStock as number)
-    setValue('description', product!.description as string)
-    setValue('banner', product!.banner as string)
+    setValue('name', product.name)
+    setValue('slug', product.slug)
+    setValue('price', product.price)
+    setValue('image', product.image)
+    setValue('category', product.category)
+    setValue('brand', product.brand)
+    setValue('countInStock', product.countInStock)
+    setValue('description', product.description)
+    setValue('banner', product.banner)
   }, [product, setValue])
 
   const formSubmit = async (formData: any) => {
