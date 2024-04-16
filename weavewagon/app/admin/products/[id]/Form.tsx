@@ -39,15 +39,15 @@ export default function ProductEditForm({ productId }: { productId: string }) {
 
   useEffect(() => {
     if (!product) return
-    setValue('name', product.name)
-    setValue('slug', product.slug)
-    setValue('price', product.price)
-    setValue('image', product.image)
-    setValue('category', product.category)
-    setValue('brand', product.brand)
-    setValue('countInStock', product.countInStock)
-    setValue('description', product.description)
-    setValue('banner', product.banner)
+    setValue('name', (product as any).name)
+    setValue('slug', (product as any).slug)
+    setValue('price', (product as any).price)
+    setValue('image', (product as any).image)
+    setValue('category', (product as any).category)
+    setValue('brand', (product as any).brand)
+    setValue('countInStock', (product as any).countInStock)
+    setValue('description', (product as any).description)
+    setValue('banner', (product as any).banner)
   }, [product, setValue])
 
   const formSubmit = async (formData: any) => {

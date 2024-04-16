@@ -46,7 +46,6 @@ export interface Product extends Document {
   createdBy: string
   ratings: ProductRating[]
 }
-
 const ProductModel =
   mongoose.models.Product || mongoose.model('Product', productSchema)
 
