@@ -39,15 +39,28 @@ export default function ProductEditForm({ productId }: { productId: string }) {
 
   useEffect(() => {
     if (!product) return
-    setValue('name', product.name)
-    setValue('slug', product.slug)
-    setValue('price', product.price)
-    setValue('image', product.image)
-    setValue('category', product.category)
-    setValue('brand', product.brand)
-    setValue('countInStock', product.countInStock)
-    setValue('description', product.description)
-    setValue('banner', product.banner)
+
+    const {
+      name,
+      slug,
+      price,
+      image,
+      category,
+      brand,
+      countInStock,
+      description,
+      banner,
+    } = product
+
+    setValue('name', name)
+    setValue('slug', slug)
+    setValue('price', price)
+    setValue('image', image)
+    setValue('category', category)
+    setValue('brand', brand)
+    setValue('countInStock', countInStock)
+    setValue('description', description)
+    setValue('banner', banner)
   }, [product, setValue])
 
   const formSubmit = async (formData: any) => {
@@ -57,14 +70,17 @@ export default function ProductEditForm({ productId }: { productId: string }) {
   if (error) return error.message
   if (!product) return 'Loading...'
 
-  type FormInputProps = {
+  const FormInput = ({
+    id,
+    name,
+    required,
+    pattern,
+  }: {
     id: keyof Product
     name: string
     required?: boolean
     pattern?: ValidationRule<RegExp>
-  }
-
-  const FormInput = ({ id, name, required, pattern }: FormInputProps) => (
+  }) => (
     <div className="md:flex mb-6">
       <label className="label md:w-1/5" htmlFor={id}>
         {name}
