@@ -83,4 +83,4 @@ export const GET = auth(async (...request: any) => {
     topProductsByRevenue,
     productDetails,
   })
-})
+}) as any
