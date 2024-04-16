@@ -121,6 +121,7 @@ export default function ProductEditForm({ productId }: { productId: string }) {
         }
       )
       const data = await res.json()
+      // @ts-ignore
       setValue('image', data.secure_url)
       toast.success('File uploaded successfully', {
         id: toastId,
