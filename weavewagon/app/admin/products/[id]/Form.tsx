@@ -45,10 +45,9 @@ export default function ProductEditForm({ productId }: { productId: string }) {
     setValue('image', product.image)
     setValue('category', product.category)
     setValue('brand', product.brand)
-    setValue('countInStock', product.countInStock)
     setValue('description', product.description)
     setValue('banner', product.banner)
-  }, [product, setValue]) as any
+  }, [product, setValue])
 
   const formSubmit = async (formData: any) => {
     await updateProduct(formData)
