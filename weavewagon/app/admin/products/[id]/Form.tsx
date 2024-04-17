@@ -149,6 +149,7 @@ export default function ProductEditForm({ productId }: { productId: string }) {
         }
       )
       const data = await res.json()
+      // @ts-ignore
       setValue('banner', data.secure_url)
       toast.success('Banner uploaded successfully', {
         id: toastId,

@@ -131,9 +131,6 @@ export default function ProductEditForm({ productId }: { productId: string }) {
             className="input input-bordered w-full max-w-md"
             onBlur={closeInfo}
           />
-          {errors[id]?.message && (
-            <div className="text-error">{errors[id]?.message}</div>
-          )}
         </div>
         {id === 'price' && showInfo && (
           <div className="absolute z-10 p-2 bg-white border border-gray-300 rounded shadow-md text-sm">
