@@ -1,0 +1,20 @@
+{
+  "name": "testing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "cucumber-js features/*.feature"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chai": "^4.3.10",
+    "cucumber": "^6.0.5",
+    "selenium-webdriver": "^4.15.0"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^10.0.1"
+  }
+}
